@@ -1,0 +1,43 @@
+##################################################################################################
+# Details service
+##################################################################################################
+apiVersion: v1
+kind: Service
+metadata:
+  name: menzhen
+  labels:
+    app: menzhen
+    service: menzhen
+spec:
+  ports:
+  - port: 8080
+    name: http
+  selector:
+    app: menzhen
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: menzhen-v1
+  labels:
+    app: menzhen
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: menzhen
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: menzhen
+        version: v1
+    spec:
+      containers:
+      - name: menzhen
+        image: lizongshen/menzhen:1.0
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+---
