@@ -91,3 +91,45 @@ spec:
         host: menzhen
         subset: v1
 ---
+# gateway
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: hiscloud-gateway
+spec:
+  selector:
+    istio: ingressgateway # use istio default controller
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: hiscloud
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - hiscloud-gateway
+  http:
+  - match:
+    - uri:
+        exact: /ping
+    - uri:
+        prefix: /static
+    - uri:
+        exact: /login
+    - uri:
+        exact: /logout
+    - uri:
+        prefix: /api/v1/products
+    route:
+    - destination:
+        host: menzhen
+        port:
+          number: 8080
