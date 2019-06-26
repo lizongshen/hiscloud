@@ -44,53 +44,7 @@ spec:
 ##################################################################################################
 # Gateway
 ##################################################################################################
-apiVersion: networking.istio.io/v1alpha3
-kind: Gateway
-metadata:
-  name: httpbin-gateway
-spec:
-  selector:
-    istio: ingressgateway # use Istio default gateway implementation
-  servers:
-  - port:
-      number: 80
-      name: http
-      protocol: HTTP
-    hosts:
-    - "*"
----
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: httpbin
-spec:
-  hosts:
-  - "*"
-  gateways:
-  - httpbin-gateway
-  http:
-  - match:
-    - uri:
-        prefix: /ping
-    route:
-    - destination:
-        port:
-          number: 8000
-        host: httpbin
----
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: menzhen
-spec:
-  hosts:
-  - menzhen
-  http:
-  - route:
-    - destination:
-        host: menzhen
-        subset: v1
----
+
 # gateway
 apiVersion: networking.istio.io/v1alpha3
 kind: Gateway
@@ -113,7 +67,7 @@ metadata:
   name: hiscloud
 spec:
   hosts:
-  - "*"
+  - menzhen
   gateways:
   - hiscloud-gateway
   http:
@@ -122,14 +76,9 @@ spec:
         exact: /ping
     - uri:
         prefix: /static
-    - uri:
-        exact: /login
-    - uri:
-        exact: /logout
-    - uri:
-        prefix: /api/v1/products
     route:
     - destination:
         host: menzhen
+        subset: v1
         port:
           number: 8080
